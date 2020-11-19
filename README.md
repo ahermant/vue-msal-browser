@@ -33,7 +33,7 @@ For the Vue apps generated with the Vue CLI, you can import the plugin in the ma
 The options allowed are the same as [the options of the MSAL browser library](https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md). 
 
 ``` javascript
-import { default as msalPlugin } from "./plugins/msalPlugin";
+import { default as msalPlugin } from "msal-browser";
 const msalConfig = {
   auth: {
     tenant: '<your-tenant>',
@@ -87,7 +87,7 @@ You can call the plugin from you Vue components like a Vue.prototype
 You can also call it from the actions, mutation or getters in your Vue store.  
 First import the msalInstance
 
-`import { msalInstance } from "../../../plugins/msalPlugin"`
+`import { msalInstance } from "vue-msal-browser"`
 
 Then you need to authentify your users. The following action authentify the users on redirect mode with a cachelocation "localStorage" within a VueX action
 
