@@ -1,0 +1,38 @@
+{
+    "name": "vue-msal-browser",
+    "version": "1.0.0",
+    "description": "Vue plugin to authenticate with the msal-browser library",
+    "main": "msalPlugin.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "vue",
+        "MSAL",
+        "authentication",
+        "sso",
+        "SPA",
+        "vueX"
+    ],
+    "author": "Aymeric Hermant",
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/ahermant/vue-msal-browser/issues"
+    },
+    "contributors": [
+        {
+            "name": "Aymeric Hermant"
+        }
+    ],
+    "homepage": "https://github.com/ahermant/vue-msal-browser#readme",
+    "publishConfig": {
+        "access": "public"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/ahermant/vue-msal-browser.git"
+    },
+    "dependencies": {
+        "@azure/msal-browser": "2"
+    }
+}
