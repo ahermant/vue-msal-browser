@@ -1,6 +1,4 @@
 import * as msal from "@azure/msal-browser";
-import { InteractionRequiredAuthError } from "msal";
-
 let msalInstance = null;
 
 export default class msalPlugin extends msal.PublicClientApplication {
