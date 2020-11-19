@@ -84,12 +84,27 @@ You can call the plugin from you Vue components like a Vue.prototype
 
 ```
 
+#### Use the plugin in the VueX store
+
 You can also call it from the actions, mutation or getters in your Vue store.  
 First import the msalInstance
 
 `import { msalInstance } from "vue-msal-browser"`
 
-Then you need to authentify your users. The following action authentify the users on redirect mode with a cachelocation "localStorage" within a VueX action
+And then call the plugin in your actions
+
+``` javascript
+
+export default {
+  async AzureAuthentication() {
+    msalInstance.loginRedirect({});
+  }
+}
+
+
+```
+
+Here is a more detailed example: The following action authentify the users on redirect mode with a cachelocation "localStorage".
 
 ``` javascript
 
@@ -168,8 +183,16 @@ The following methods have been added to the msal-browser original methods
 * Example: 
     `let graphResponse = await msalInstance.callMSGraph(msalInstance.config.graph.url, graphTokenResponse.accessToken);`
 
+## Todos
+
+* Add the mode as a parameter to the getSilentRequest method
+* [README] Add infos on Nuxt usage
+* Convert to Typescript
+
 ## Contributing
+
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
 
 ## License
+
 [MIT](https://choosealicense.com/licenses/mit/)
