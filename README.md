@@ -146,27 +146,27 @@ For more information about how to use the msal-browser functions, please refer t
 
 The following methods have been added to the msal-browser original methods
 
-1. getSilentToken method
-Parameters: 
-* Type: object - MSAL user account object
-* Type: Array - Graph scopes
+**1. getSilentToken method**
+* Parameters: 
+    * Type: object - MSAL user account object
+    * Type: Array - Graph scopes
 
-Usage: 
-Grab a token silently for a given user and scope and return an access token object as a response. Redirect the user to the login if it fails.
+* Usage:  
+    Grab a token silently for a given user and scope and return an access token object as a response. Redirect the user to the login if it fails.
 
-Example:
-`let graphTokenResponse = await msalInstance.getSilentToken(newTokenResponse.account, msalInstance.config.graph.scopes);`
+* Example:  
+    `let graphTokenResponse = await msalInstance.getSilentToken(newTokenResponse.account, msalInstance.config.graph.scopes);`
 
-2. callMSGraph method
-Parameters:
-* Type: string - Microsoft graph endpoint
-* Type: string - Azure zccess token
+**2. callMSGraph method**
+* Parameters:
+    * Type: string - Microsoft graph endpoint
+    * Type: string - Azure zccess token
 
-Usage: 
-Allows to use the access token retrieved by the main msalInstance to call MSGraph
+* Usage: 
+    Allows to use the access token retrieved by the main msalInstance to call MSGraph
 
-Example: 
-`let graphResponse = await msalInstance.callMSGraph(msalInstance.config.graph.url, graphTokenResponse.accessToken);`
+* Example: 
+    `let graphResponse = await msalInstance.callMSGraph(msalInstance.config.graph.url, graphTokenResponse.accessToken);`
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
