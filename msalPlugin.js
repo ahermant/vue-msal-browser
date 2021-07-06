@@ -9,7 +9,7 @@ export default class msalPlugin extends msal.PublicClientApplication {
     constructor(options) {
         super(options);
         this.config.graph = options.graph || {};
-        this.config.method = options.method;
+        this.config.mode = options.mode;
     }
     callMSGraph(endpoint, accessToken) {
         const headers = new Headers();
@@ -35,7 +35,7 @@ export default class msalPlugin extends msal.PublicClientApplication {
     }
 
     async authenticate() {
-        switch(this.config.method) {
+        switch(this.config.mode) {
             case "redirect":
                 return this.authenticateRedirect();
                 break;
@@ -43,7 +43,7 @@ export default class msalPlugin extends msal.PublicClientApplication {
                 return this.authenticatePopup();
                 break;
             default:
-                throw new Error("Set authentication method: oneof ['redirect', 'popup']");
+                throw new Error("Set authentication mode: oneof ['redirect', 'popup']");
         }
     }
 
