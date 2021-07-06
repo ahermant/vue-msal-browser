@@ -37,10 +37,10 @@ export default class msalPlugin extends msal.PublicClientApplication {
     async authenticate() {
         switch(this.config.mode) {
             case "redirect":
-                return this.authenticateRedirect();
+                return await this.authenticateRedirect();
                 break;
             case "popup":
-                return this.authenticatePopup();
+                return await this.authenticatePopup();
                 break;
             default:
                 throw new Error("Set authentication mode: oneof ['redirect', 'popup']");
