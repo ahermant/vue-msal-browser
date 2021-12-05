@@ -63,24 +63,31 @@ You can call the plugin from you Vue components like a Vue.prototype
 ``` javascript
 
 <template>
-    <a v-if="$msal.isAuthenticated()" class="toolbar-items" @click="$emit('logout')">
-        <v-icon color="tertiary">mdi-logout</v-icon>
-    </a>
+    <a href="#" v-if="accounts !== 0" @click="logout()">Logout</a>
 </template>
 
 <script>
-    export default {
-        created() {
-            if (!this.$msal.isAuthenticated()) {
-                try {
-                    this.$msal.loginRedirect({});
-                } catch (err) {
-                    // handle error
-                }
-            }
-        }
+export default {
+  computed: {
+    accounts: function () {
+      return this.$msal.getAllAccounts()
     }
+  },
+  methods: {
+    logout: function () {
+      this.$msal.logoutRedirect()
+    }
+  },
+  async created () {
+    await this.$msal.handleRedirectPromise()
+    if (this.accounts.length === 0) {
+      await this.$msal.loginRedirect({})
+    }
+  }
+}
+
 </script>
+
 
 ```
 
