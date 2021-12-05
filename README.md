@@ -33,7 +33,7 @@ For the Vue apps generated with the Vue CLI, you can import the plugin in the ma
 The options allowed are the same as [the options of the MSAL browser library](https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/configuration.md). 
 
 ``` javascript
-import { default as msalPlugin } from "msal-browser";
+import { default as msalPlugin } from "vue-msal-browser";
 const msalConfig = {
   auth: {
     tenant: '<your-tenant>',
