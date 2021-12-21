@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0] - 2021-12-20
+
+### Added
+
+- `authenticate()`, `authenticateRedirect()` and `authenticatePopup` methods
+
+### Changed
+
+- [BREAKING CHANGE] The extra configuration options that were added to `msalInstance.config` have been moved to `msalInstance.extendedConfiguration` for the sake of a better type management
+
 ## [1.0.6] - 2021-12-19
 
 ### Changed

@@ -69,21 +69,13 @@ You can call the plugin from you Vue components like a Vue.prototype
 
 <script>
 export default {
-  computed: {
-    accounts: function () {
-      return this.$msal.getAllAccounts()
-    }
-  },
   methods: {
     logout: function () {
       this.$msal.logoutRedirect()
     }
   },
-  async created () {
-    await this.$msal.handleRedirectPromise()
-    if (this.accounts.length === 0) {
-      await this.$msal.loginRedirect({})
-    }
+  created () {
+    this.$msal.authenticateRedirect()
   }
 }
 
@@ -104,7 +96,7 @@ And then call the plugin in your actions
 ```javascript
 export default {
   async AzureAuthentication() {
-    msalInstance.loginRedirect({});
+    msalInstance.authenticateRedirect();
   },
 };
 ```
@@ -116,22 +108,21 @@ export default {
   // Authenticate the user with Active Directory
   async AzureAuthentication({ commit, getters, dispatch }) {
     try {
-      let exisitingTokenResponse = getters.mainTokenResponse;
+      let existingTokenResponse = getters.mainTokenResponse;
       let newTokenResponse;
 
       // The user has already logged in. We try to get his token silently
-      if (exisitingTokenResponse)
+      if (existingTokenResponse)
         newTokenResponse = await msalInstance.acquireTokenSilent({
-          account: exisitingTokenResponse.account,
-          scopes: msalInstance.config.auth.scopes,
+          account: existingTokenResponse.account,
+          scopes: msalInstance.extendedConfiguration.auth.scopes,
         });
       // The user has not logged in. We check if he comes back from a redirect with a token
       else newTokenResponse = await msalInstance.handleRedirectPromise();
 
       // No token found, we redirect the user
       if (!newTokenResponse) {
-        const loginRequest = { scopes: msalInstance.config.auth.scopes };
-        await msalInstance.loginRedirect(loginRequest);
+        await msalInstance.loginRedirect(msalInstance.loginRequest);
         return false;
       }
       // There is an existing token, we authentify the user
@@ -139,16 +130,16 @@ export default {
         // We add the access token as an authorization header for our Axios requests to our API
         this._vm.axios.defaults.headers.common["Authorization"] =
           "Bearer " + newTokenResponse.accessToken;
-        if (msalInstance.config.graph) {
+        if (msalInstance.extendedConfiguration.graph) {
           // The graph is set, we check if the user has already a picture in the local storage
           // if he does not we grab a token silently for our graph scope and call Microsoft graph to get the picture
           if (!localStorage.getItem("userPicture")) {
             let graphTokenResponse = await msalInstance.getSilentToken(
               newTokenResponse.account,
-              msalInstance.config.graph.scopes
+              msalInstance.extendedConfiguration.graph.scopes
             );
             let graphResponse = await msalInstance.callMSGraph(
-              msalInstance.config.graph.url,
+              msalInstance.extendedConfiguration.graph.url,
               graphTokenResponse.accessToken
             );
             dispatch("AzureSetPicture", graphResponse);
@@ -163,45 +154,93 @@ export default {
 };
 ```
 
-## Methods and data
+## Extra configuration options and methods
 
-For more information about how to use the msal-browser functions, please refer to the [MSAL browser documentation](https://www.npmjs.com/package/@azure/msal-browser#usage)
+The chapter below describes the extra configuration options and methods added by `vue-msal-browser`.
+For more information about how to use the basic msal-browser functions, please refer to the [MSAL browser documentation](https://www.npmjs.com/package/@azure/msal-browser#usage).
+
+### Extra configuration options
+
+#### General Config Options
+
+| Option | Description                                                                                                                                                                                                                                                        | Format | Default Value |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------ | ------------- |
+| `mode` | [MSAL Interaction type](https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/initialization.md#choosing-an-interaction-type) used for authentication. Used in the `authenticate` method. Can be `redirect` or `popup` | string | undefined     |
+
+#### Auth Config Options
+
+| Option   | Description                                                                                                                                                                                           | Format           | Default Value |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- | ------------- |
+| `scopes` | Default authentication [scopes](https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/resources-and-scopes.md) that your users will be allowed to access. | Array of strings | []            |
+
+#### Graph Config Options
+
+| Option          | Description                                                                                                                                                                                            | Format           | Default Value |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------------- | ------------- |
+| `url`           | The URL of your graph API.                                                                                                                                                                             | string           | undefined     |
+| `scopes`        | Default authentication [scopes](https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-browser/docs/resources-and-scopes.md) that your users require from you graph API. | Array of strings | []            |
+| `response_type` | Response type expected from the graph API.                                                                                                                                                             | string           | undefined     |
 
 ### Extra methods
 
 The following methods have been added to the msal-browser original methods
 
-**1. getSilentToken method**
+**1. authenticate**
 
-- Parameters:
+- Usage:
+  Authenticate the user with a `redirect` or a `popup` depending on the `mode` configuration option.
 
-  - Type: object - MSAL user account object
-  - Type: Array - Graph scopes
+- Example:
+  `msalInstance.authenticate()`
+
+**2. authenticateRedirect**
+
+- Usage:
+  Ensure that there is no interaction ongoing and authenticate the user with the `redirect` mode if he is not authenticated yet.
+
+- Example:
+  `msalInstance.authenticateRedirect()`
+
+**3. authenticatePopup**
+
+- Usage:
+  Authenticate the user with the `popup` mode if he is not authenticated yet.
+
+- Example:
+  `msalInstance.authenticatePopup()`
+
+**4. getSilentToken**
+
+| Parameter name | Type             | Description              |
+| -------------- | ---------------- | ------------------------ |
+| `account`      | Object           | MSAL user account object |
+| `scopes`       | Array of strings | Graph scopes             |
 
 - Usage:  
    Grab a token silently for a given user and scope and return an access token object as a response. Redirect the user to the login if it fails.
 
 - Example:  
-   `let graphTokenResponse = await msalInstance.getSilentToken(newTokenResponse.account, msalInstance.config.graph.scopes);`
+   `let graphTokenResponse = await msalInstance.getSilentToken(newTokenResponse.account, msalInstance.extendedConfiguration.graph.scopes);`
 
-**2. callMSGraph method**
+**5. callMSGraph**
 
-- Parameters:
-
-  - Type: string - Microsoft graph endpoint
-  - Type: string - Azure access token
+| Parameter name | Type   | Description              |
+| -------------- | ------ | ------------------------ |
+| `endpoint`     | String | Microsoft graph endpoint |
+| `accessToken`  | String | Azure access token       |
 
 - Usage:
-  Allows to use the access token retrieved by the main msalInstance to call MSGraph
+  Allows to use the access token retrieved by the main `msalInstance` to call MSGraph
 
 - Example:
-  `let graphResponse = await msalInstance.callMSGraph(msalInstance.config.graph.url, graphTokenResponse.accessToken);`
+  `let graphResponse = await msalInstance.callMSGraph(msalInstance.extendedConfiguration.graph.url, graphTokenResponse.accessToken);`
 
 ## Todos
 
-- Add the mode as a parameter to the getSilentToken method
-- [README] Add infos on Nuxt usage
 - Make a Vue 3 version
+- Add the mode as a parameter to the getSilentToken method
+- Add tests
+- [README] Add infos on Nuxt usage
 
 ## Contributing
 

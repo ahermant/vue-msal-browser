@@ -13,6 +13,17 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -55,7 +66,8 @@ var msalPlugin = /** @class */ (function (_super) {
     __extends(msalPlugin, _super);
     function msalPlugin(options) {
         var _this = _super.call(this, options) || this;
-        _this.config.graph = options.graph || {};
+        _this.extendedConfiguration = __assign({}, options);
+        _this.loginRequest = { scopes: options.auth.scopes || [] };
         return _this;
     }
     msalPlugin.install = function (vue, msalConfig) {
@@ -90,6 +102,56 @@ var msalPlugin = /** @class */ (function (_super) {
                                     return _this.acquireTokenRedirect(silentRequest);
                                 }
                             })];
+                    case 1: return [2 /*return*/, _a.sent()];
+                }
+            });
+        });
+    };
+    msalPlugin.prototype.authenticate = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var _a;
+            return __generator(this, function (_b) {
+                switch (_b.label) {
+                    case 0:
+                        _a = this.extendedConfiguration.mode;
+                        switch (_a) {
+                            case "redirect": return [3 /*break*/, 1];
+                            case "popup": return [3 /*break*/, 3];
+                        }
+                        return [3 /*break*/, 5];
+                    case 1: return [4 /*yield*/, this.authenticateRedirect()];
+                    case 2: return [2 /*return*/, _b.sent()];
+                    case 3: return [4 /*yield*/, this.authenticatePopup()];
+                    case 4: return [2 /*return*/, _b.sent()];
+                    case 5: throw new Error("Set authentication mode: oneof ['redirect', 'popup']");
+                }
+            });
+        });
+    };
+    msalPlugin.prototype.authenticateRedirect = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            var accounts;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.handleRedirectPromise()];
+                    case 1:
+                        _a.sent();
+                        accounts = this.getAllAccounts();
+                        if (!(accounts.length === 0)) return [3 /*break*/, 3];
+                        return [4 /*yield*/, this.loginRedirect(this.loginRequest)];
+                    case 2:
+                        _a.sent();
+                        _a.label = 3;
+                    case 3: return [2 /*return*/, accounts];
+                }
+            });
+        });
+    };
+    msalPlugin.prototype.authenticatePopup = function () {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4 /*yield*/, this.loginPopup(this.loginRequest)];
                     case 1: return [2 /*return*/, _a.sent()];
                 }
             });
