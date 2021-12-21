@@ -101,7 +101,7 @@ export default {
 };
 ```
 
-Here is a more detailed example: The following action authentify the users on redirect mode with a cachelocation "localStorage".
+Here is a more detailed example: The following action authentify the users on redirect mode with a cacheLocation `localStorage`.
 
 ```javascript
 export default {
@@ -237,8 +237,8 @@ The following methods have been added to the msal-browser original methods
 
 ## Todos
 
-- Make a Vue 3 version
-- Add the mode as a parameter to the getSilentToken method
+- Vue 3 version
+- Add the `mode` as a parameter to the `getSilentToken` method
 - Add tests
 - [README] Add infos on Nuxt usage
 
