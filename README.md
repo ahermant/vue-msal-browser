@@ -69,6 +69,11 @@ You can call the plugin from you Vue components like a Vue.prototype
 
 <script>
 export default {
+  computed: {
+    accounts: function () {
+      return this.$msal.getAllAccounts()
+    }
+  },
   methods: {
     logout: function () {
       this.$msal.logoutRedirect()
@@ -80,7 +85,6 @@ export default {
 }
 
 </script>
-
 
 ```
 
